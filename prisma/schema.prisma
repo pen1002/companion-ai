@@ -1,0 +1,85 @@
+// prisma/schema.prisma
+// 시니어 동반자 AI 비서 데이터베이스 스키마
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// 사용자 테이블
+model User {
+  id           String        @id @default(uuid()) @db.Uuid
+  name         String        @default("어르신")
+  phone        String?       @unique
+  createdAt    DateTime      @default(now()) @map("created_at")
+  updatedAt    DateTime      @updatedAt @map("updated_at")
+  
+  medications  Medication[]
+  conversations Conversation[]
+  pushSubscriptions PushSubscription[]
+  
+  @@map("users")
+}
+
+// 약 복용 정보 테이블 (핵심)
+model Medication {
+  id             String    @id @default(uuid()) @db.Uuid
+  userId         String    @map("user_id") @db.Uuid
+  medicationName String    @map("medication_name")
+  dosage         String    @default("1알")
+  alarmTimes     Json      @map("alarm_times") @db.JsonB // ["08:00", "13:00", "19:00"]
+  isActive       Boolean   @default(true) @map("is_active")
+  lastTakenAt    DateTime? @map("last_taken_at")
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+  
+  user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  logs           MedicationLog[]
+  
+  @@map("medications")
+}
+
+// 약 복용 기록 테이블
+model MedicationLog {
+  id           String   @id @default(uuid()) @db.Uuid
+  medicationId String   @map("medication_id") @db.Uuid
+  scheduledTime String  @map("scheduled_time") // "08:00"
+  takenAt      DateTime @map("taken_at")
+  date         DateTime @db.Date
+  
+  medication   Medication @relation(fields: [medicationId], references: [id], onDelete: Cascade)
+  
+  @@unique([medicationId, date, scheduledTime])
+  @@map("medication_logs")
+}
+
+// 대화 기록 테이블
+model Conversation {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @map("user_id") @db.Uuid
+  role      String   // "user" | "assistant"
+  content   String
+  createdAt DateTime @default(now()) @map("created_at")
+  
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@map("conversations")
+}
+
+// 푸시 알림 구독 테이블
+model PushSubscription {
+  id           String   @id @default(uuid()) @db.Uuid
+  userId       String   @map("user_id") @db.Uuid
+  endpoint     String   @unique
+  keys         Json     @db.JsonB // { p256dh, auth }
+  createdAt    DateTime @default(now()) @map("created_at")
+  
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@map("push_subscriptions")
+}

@@ -1,0 +1,53 @@
+{
+  "name": "마음벗 - 시니어 동반자 AI 비서",
+  "short_name": "마음벗",
+  "description": "시니어와 1인 가구를 위한 따뜻한 AI 동반자. 약 복용 알림, 건강 관리, 정서적 케어를 제공합니다.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#fefce8",
+  "theme_color": "#16a34a",
+  "orientation": "portrait",
+  "scope": "/",
+  "lang": "ko",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshot-1.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow"
+    }
+  ],
+  "categories": ["health", "lifestyle", "medical"],
+  "shortcuts": [
+    {
+      "name": "오늘 약 확인",
+      "short_name": "약 확인",
+      "description": "오늘 복용할 약 목록 확인",
+      "url": "/?tab=medications",
+      "icons": [{ "src": "/icon-pill.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "대화하기",
+      "short_name": "대화",
+      "description": "AI 비서와 대화하기",
+      "url": "/?tab=chat",
+      "icons": [{ "src": "/icon-chat.png", "sizes": "96x96" }]
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false
+}
